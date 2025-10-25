@@ -3,40 +3,44 @@ import { useState } from 'react';
 export default function TranslatorPage() {
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
-  const [sourceLang, setSourceLang] = useState('ru');
-  const [targetLang, setTargetLang] = useState('en');
+  const [sourceLang, setSourceLang] = useState('en');
+  const [targetLang, setTargetLang] = useState('ru');
   const [isLoading, setIsLoading] = useState(false);
 
   const languages = [
+    { code: 'en', name: 'Английский' },
     { code: 'ru', name: 'Русский' },
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Español' },
-    { code: 'fr', name: 'Français' },
-    { code: 'de', name: 'Deutsch' },
-    { code: 'it', name: 'Italiano' },
-    { code: 'pt', name: 'Português' },
-    { code: 'zh', name: '中文' },
-    { code: 'ja', name: '日本語' },
-    { code: 'ko', name: '한국어' }
+    { code: 'es', name: 'Испанский' },
+    { code: 'fr', name: 'Французский' },
+    { code: 'de', name: 'Немецкий' },
+    { code: 'it', name: 'Итальянский' },
+    { code: 'pt', name: 'Португальский' },
+    { code: 'zh', name: 'Китайский' },
+    { code: 'ja', name: 'Японский' },
+    { code: 'ko', name: 'Корейский' },
+    { code: 'ar', name: 'Арабский' },
   ];
 
-  const handleTranslate = async () => {
+  const translateText = async () => {
     if (!sourceText.trim()) return;
 
     setIsLoading(true);
     try {
-      // В будущем подключить к реальному API
-      // const response = await fetch('/api/translator/translate', {
+      // В будущем подключим к реальному API
+      // const response = await fetch('http://localhost:3000/api/translator/translate', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ text: sourceText, from: sourceLang, to: targetLang })
+      //   body: JSON.stringify({
+      //     text: sourceText,
+      //     source: sourceLang,
+      //     target: targetLang
+      //   })
       // });
       // const data = await response.json();
-      // setTranslatedText(data.translatedText);
 
-      // Временная симуляция перевода
+      // Симуляция перевода
       setTimeout(() => {
-        setTranslatedText(`[Перевод] ${sourceText} (${sourceLang} → ${targetLang})`);
+        setTranslatedText(`[Перевод с ${sourceLang} на ${targetLang}]: ${sourceText}`);
         setIsLoading(false);
       }, 1000);
 
@@ -47,128 +51,173 @@ export default function TranslatorPage() {
   };
 
   const swapLanguages = () => {
-    setSourceLang(targetLang);
-    setTargetLang(sourceLang);
+    const tempText = sourceText;
+    const tempLang = sourceLang;
+
     setSourceText(translatedText);
-    setTranslatedText(sourceText);
+    setSourceLang(targetLang);
+    setTranslatedText(tempText);
+    setTargetLang(tempLang);
+  };
+
+  const clearText = () => {
+    setSourceText('');
+    setTranslatedText('');
   };
 
   return (
-    <div className="container py-4">
+    <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card">
-            <div className="card-header">
-              <h3 className="mb-0">
-                <i className="fas fa-language me-2 text-primary"></i>
-                Онлайн переводчик
-              </h3>
-              <small className="text-muted">Поддержка 100+ языков</small>
-            </div>
-            <div className="card-body">
-              {/* Исходный текст */}
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <label className="form-label mb-0">
-                    <i className="fas fa-keyboard me-2"></i>
-                    Исходный текст
-                  </label>
-                  <select
-                    className="form-select form-select-sm w-auto"
-                    value={sourceLang}
-                    onChange={(e) => setSourceLang(e.target.value)}
-                  >
-                    {languages.map(lang => (
-                      <option key={lang.code} value={lang.code}>
-                        {lang.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <textarea
-                  className="form-control"
-                  rows={6}
-                  placeholder="Введите текст для перевода..."
-                  value={sourceText}
-                  onChange={(e) => setSourceText(e.target.value)}
-                />
-              </div>
-
-              {/* Кнопка обмена языками */}
+        <div className="col-lg-10">
+          <div className="card shadow">
+            <div className="card-body p-4">
               <div className="text-center mb-4">
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={swapLanguages}
-                  disabled={!sourceText && !translatedText}
-                >
-                  <i className="fas fa-exchange-alt"></i>
-                </button>
+                <i className="fas fa-language fa-3x text-warning mb-3"></i>
+                <h2 className="mb-2">Переводчик</h2>
+                <p className="text-muted">Переводите тексты на 100+ языков мгновенно</p>
               </div>
 
-              {/* Перевод */}
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <label className="form-label mb-0">
-                    <i className="fas fa-language me-2"></i>
-                    Перевод
-                  </label>
-                  <select
-                    className="form-select form-select-sm w-auto"
-                    value={targetLang}
-                    onChange={(e) => setTargetLang(e.target.value)}
-                  >
-                    {languages.map(lang => (
-                      <option key={lang.code} value={lang.code}>
-                        {lang.name}
-                      </option>
-                    ))}
-                  </select>
+              <div className="row g-4">
+                {/* Исходный текст */}
+                <div className="col-md-5">
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Исходный язык:
+                      <select
+                        className="form-select"
+                        value={sourceLang}
+                        onChange={(e) => setSourceLang(e.target.value)}
+                      >
+                        {languages.map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <textarea
+                    className="form-control mb-3"
+                    rows={8}
+                    placeholder="Введите текст для перевода..."
+                    value={sourceText}
+                    onChange={(e) => setSourceText(e.target.value)}
+                  />
+
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-outline-secondary flex-fill"
+                      onClick={clearText}
+                    >
+                      <i className="fas fa-trash me-2"></i>
+                      Очистить
+                    </button>
+                    <button
+                      className="btn btn-outline-primary"
+                      onClick={swapLanguages}
+                      disabled={!sourceText && !translatedText}
+                    >
+                      <i className="fas fa-exchange-alt"></i>
+                    </button>
+                  </div>
                 </div>
-                <textarea
-                  className="form-control"
-                  rows={6}
-                  placeholder="Здесь появится перевод..."
-                  value={translatedText}
-                  readOnly
-                />
-              </div>
 
-              {/* Кнопка перевода */}
-              <div className="text-center">
-                <button
-                  className="btn btn-primary btn-lg px-5"
-                  onClick={handleTranslate}
-                  disabled={!sourceText.trim() || isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                      Перевод...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-language me-2"></i>
-                      Перевести
-                    </>
+                {/* Кнопка перевода */}
+                <div className="col-md-2 d-flex align-items-center justify-content-center">
+                  <button
+                    className="btn btn-primary btn-lg rounded-circle d-flex align-items-center justify-content-center"
+                    style={{width: '80px', height: '80px'}}
+                    onClick={translateText}
+                    disabled={!sourceText.trim() || isLoading}
+                  >
+                    {isLoading ? (
+                      <div className="spinner-border spinner-border-sm text-white" role="status">
+                        <span className="visually-hidden">Перевод...</span>
+                      </div>
+                    ) : (
+                      <i className="fas fa-arrow-right fa-lg"></i>
+                    )}
+                  </button>
+                </div>
+
+                {/* Переведенный текст */}
+                <div className="col-md-5">
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Целевой язык:
+                      <select
+                        className="form-select"
+                        value={targetLang}
+                        onChange={(e) => setTargetLang(e.target.value)}
+                      >
+                        {languages.map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <textarea
+                    className="form-control mb-3"
+                    rows={8}
+                    placeholder="Здесь появится перевод..."
+                    value={translatedText}
+                    readOnly
+                  />
+
+                  {translatedText && (
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-outline-success flex-fill">
+                        <i className="fas fa-copy me-2"></i>
+                        Скопировать
+                      </button>
+                      <button className="btn btn-outline-primary flex-fill">
+                        <i className="fas fa-volume-up me-2"></i>
+                        Прослушать
+                      </button>
+                    </div>
                   )}
-                </button>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* История переводов */}
-          <div className="card mt-4">
-            <div className="card-header">
-              <h5 className="mb-0">
-                <i className="fas fa-history me-2"></i>
-                История переводов
-              </h5>
-            </div>
-            <div className="card-body">
-              <div className="text-center py-4">
-                <i className="fas fa-clock fa-3x text-muted mb-3"></i>
-                <h5 className="text-muted">История пуста</h5>
-                <p className="text-muted">Здесь будут сохранены ваши переводы</p>
+              {/* Дополнительные функции */}
+              <div className="row mt-4">
+                <div className="col-12">
+                  <div className="card bg-light">
+                    <div className="card-body">
+                      <h5 className="card-title">
+                        <i className="fas fa-lightbulb text-warning me-2"></i>
+                        Дополнительные возможности
+                      </h5>
+                      <div className="row g-3">
+                        <div className="col-md-4">
+                          <div className="text-center">
+                            <i className="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                            <h6>Документы</h6>
+                            <p className="small text-muted">Перевод файлов PDF, DOC</p>
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="text-center">
+                            <i className="fas fa-globe fa-2x text-success mb-2"></i>
+                            <h6>Сайты</h6>
+                            <p className="small text-muted">Перевод веб-страниц</p>
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="text-center">
+                            <i className="fas fa-images fa-2x text-info mb-2"></i>
+                            <h6>Изображения</h6>
+                            <p className="small text-muted">Распознавание и перевод текста</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

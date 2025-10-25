@@ -1,226 +1,333 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Article {
   id: string;
   title: string;
   content: string;
-  category: string;
-  author: string;
-  views: number;
-  rating: number;
+  categoryId: string;
+  userId: string;
+  viewsCount: number;
+  isPublished: boolean;
   createdAt: string;
-  tags: string[];
+  updatedAt: string;
 }
 
 interface Category {
   id: string;
   name: string;
   description: string;
-  articlesCount: number;
-  color: string;
+  parentId?: string;
 }
 
 export default function WikiPage() {
-  const [categories] = useState<Category[]>([
-    {
-      id: '1',
-      name: 'Технологии',
-      description: 'Статьи о программировании, IT и технологиях',
-      articlesCount: 25,
-      color: 'primary'
-    },
-    {
-      id: '2',
-      name: 'Наука',
-      description: 'Научные открытия и исследования',
-      articlesCount: 18,
-      color: 'success'
-    },
-    {
-      id: '3',
-      name: 'История',
-      description: 'Исторические события и биографии',
-      articlesCount: 32,
-      color: 'warning'
-    },
-    {
-      id: '4',
-      name: 'Культура',
-      description: 'Искусство, литература и культурные явления',
-      articlesCount: 15,
-      color: 'info'
-    }
-  ]);
-
-  const [articles] = useState<Article[]>([
-    {
-      id: '1',
-      title: 'Введение в React',
-      content: 'React - это JavaScript библиотека для создания пользовательских интерфейсов...',
-      category: 'Технологии',
-      author: 'Разработчик',
-      views: 1250,
-      rating: 4.8,
-      createdAt: new Date().toLocaleDateString('ru-RU'),
-      tags: ['React', 'JavaScript', 'Frontend']
-    },
-    {
-      id: '2',
-      title: 'История интернета',
-      content: 'Интернет начал развиваться в 1960-х годах...',
-      category: 'История',
-      author: 'Историк',
-      views: 890,
-      rating: 4.6,
-      createdAt: new Date(Date.now() - 86400000).toLocaleDateString('ru-RU'),
-      tags: ['Интернет', 'История', 'Технологии']
-    },
-    {
-      id: '3',
-      title: 'Теория относительности',
-      content: 'Специальная теория относительности была опубликована Альбертом Эйнштейном в 1905 году...',
-      category: 'Наука',
-      author: 'Физик',
-      views: 2100,
-      rating: 4.9,
-      createdAt: new Date(Date.now() - 172800000).toLocaleDateString('ru-RU'),
-      tags: ['Физика', 'Наука', 'Эйнштейн']
-    }
-  ]);
-
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [newArticleTitle, setNewArticleTitle] = useState('');
+  const [newArticleContent, setNewArticleContent] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const filteredArticles = selectedCategory
-    ? articles.filter(article => article.category === selectedCategory)
-    : articles.filter(article =>
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      // В будущем будет API
+      // const articlesResponse = await fetch('http://localhost:3000/api/wiki/articles');
+      // const categoriesResponse = await fetch('http://localhost:3000/api/wiki/categories');
+
+      // Пока используем моковые данные
+      const mockArticles: Article[] = [
+        {
+          id: '1',
+          title: 'Добро пожаловать в вики',
+          content: 'Это наша база знаний. Здесь вы можете найти полезную информацию и поделиться знаниями с другими пользователями.',
+          categoryId: '1',
+          userId: '1',
+          viewsCount: 45,
+          isPublished: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: '2',
+          title: 'Как использовать портал',
+          content: 'Подробное руководство по использованию всех функций портала: социальная сеть, форум, магазин и переводчик.',
+          categoryId: '1',
+          userId: '1',
+          viewsCount: 23,
+          isPublished: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ];
+
+      const mockCategories: Category[] = [
+        { id: '1', name: 'Общее', description: 'Общая информация о портале' },
+        { id: '2', name: 'Техническое', description: 'Техническая документация' },
+        { id: '3', name: 'Помощь', description: 'Руководства и FAQ' }
+      ];
+
+      setArticles(mockArticles);
+      setCategories(mockCategories);
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredArticles = articles.filter(article => {
+    const matchesCategory = !selectedCategory || article.categoryId === selectedCategory;
+    const matchesSearch = !searchQuery ||
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.content.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch && article.isPublished;
+  });
+
+  const createArticle = async () => {
+    if (!newArticleTitle.trim() || !newArticleContent.trim()) return;
+
+    try {
+      // В будущем будет API
+      const newArticle: Article = {
+        id: Date.now().toString(),
+        title: newArticleTitle,
+        content: newArticleContent,
+        categoryId: selectedCategory || '1',
+        userId: '1', // В будущем из JWT токена
+        viewsCount: 0,
+        isPublished: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      setArticles(prev => [newArticle, ...prev]);
+      setNewArticleTitle('');
+      setNewArticleContent('');
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error('Ошибка создания статьи:', error);
+    }
+  };
 
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">
-          <i className="fas fa-book me-2 text-primary"></i>
-          Мини-Вики
-        </h2>
-        <button className="btn btn-primary">
-          <i className="fas fa-plus me-2"></i>
-          Создать статью
-        </button>
-      </div>
-
-      {/* Поиск */}
-      <div className="card mb-4">
-        <div className="card-body">
-          <div className="input-group">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Поиск статей..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className="btn btn-outline-secondary">
-              <i className="fas fa-search"></i>
+    <div className="container py-5">
+      <div className="row">
+        <div className="col-lg-8">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h1 className="mb-0">
+              <i className="fas fa-book me-2 text-danger"></i>
+              Мини-Вики
+            </h1>
+            <button
+              className="btn btn-outline-primary"
+              onClick={() => setShowCreateForm(!showCreateForm)}
+            >
+              <i className="fas fa-plus me-2"></i>
+              Создать статью
             </button>
           </div>
-        </div>
-      </div>
 
-      {!selectedCategory ? (
-        // Список категорий
-        <div className="row">
-          {categories.map((category) => (
-            <div key={category.id} className="col-md-6 mb-4">
-              <div className="card h-100 feature-card">
-                <div className="card-body">
-                  <div className="d-flex align-items-center mb-3">
-                    <div className={`bg-${category.color} rounded-circle d-flex align-items-center justify-content-center text-white me-3`} style={{width: '50px', height: '50px'}}>
-                      <i className="fas fa-folder"></i>
-                    </div>
-                    <div>
-                      <h5 className="mb-1">{category.name}</h5>
-                      <small className="text-muted">{category.articlesCount} статей</small>
-                    </div>
-                  </div>
-                  <p className="card-text text-muted">{category.description}</p>
-                  <button
-                    className="btn btn-outline-primary w-100"
-                    onClick={() => setSelectedCategory(category.name)}
+          {/* Поиск */}
+          <div className="card mb-4">
+            <div className="card-body">
+              <div className="row g-3">
+                <div className="col-md-8">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Поиск по статьям..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <select
+                    className="form-select"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
                   >
-                    Просмотреть статьи
+                    <option value="">Все категории</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Создание статьи */}
+          {showCreateForm && (
+            <div className="card mb-4">
+              <div className="card-body">
+                <h5 className="card-title">Создать новую статью</h5>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Заголовок статьи"
+                    value={newArticleTitle}
+                    onChange={(e) => setNewArticleTitle(e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <select
+                    className="form-select mb-3"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="">Выберите категорию</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <textarea
+                    className="form-control"
+                    rows={6}
+                    placeholder="Содержание статьи..."
+                    value={newArticleContent}
+                    onChange={(e) => setNewArticleContent(e.target.value)}
+                  />
+                </div>
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-success"
+                    onClick={createArticle}
+                    disabled={!newArticleTitle.trim() || !newArticleContent.trim()}
+                  >
+                    <i className="fas fa-save me-2"></i>
+                    Сохранить
+                  </button>
+                  <button
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowCreateForm(false)}
+                  >
+                    Отмена
                   </button>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        // Статьи категории
-        <div>
-          <div className="d-flex align-items-center mb-3">
-            <button
-              className="btn btn-outline-secondary me-3"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <i className="fas fa-arrow-left me-2"></i>
-              Назад к категориям
-            </button>
-            <h4>Статьи категории "{selectedCategory}"</h4>
-          </div>
+          )}
 
-          <div className="row">
-            {filteredArticles.map((article) => (
-              <div key={article.id} className="col-md-6 mb-4">
-                <div className="card h-100 feature-card">
+          {/* Список статей */}
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Загрузка...</span>
+              </div>
+              <p className="mt-3">Загрузка статей...</p>
+            </div>
+          ) : filteredArticles.length === 0 ? (
+            <div className="text-center py-5">
+              <i className="fas fa-search fa-3x text-muted mb-3"></i>
+              <h4 className="text-muted">Статьи не найдены</h4>
+              <p className="text-muted">Попробуйте изменить поисковый запрос или создайте новую статью.</p>
+            </div>
+          ) : (
+            <div className="articles-list">
+              {filteredArticles.map((article) => (
+                <div key={article.id} className="card mb-3">
                   <div className="card-body">
                     <div className="d-flex justify-content-between align-items-start mb-2">
-                      <h5 className="card-title">
-                        <a href={`/wiki/article/${article.id}`} className="text-decoration-none">
+                      <h5 className="card-title mb-0">
+                        <a href={`/wiki/articles/${article.id}`} className="text-decoration-none">
                           {article.title}
                         </a>
                       </h5>
-                      <span className="badge bg-primary">{article.category}</span>
+                      <div className="text-end">
+                        <div className="badge bg-primary me-2">
+                          <i className="fas fa-eye me-1"></i>
+                          {article.viewsCount}
+                        </div>
+                        <small className="text-muted">
+                          {new Date(article.createdAt).toLocaleDateString('ru-RU')}
+                        </small>
+                      </div>
                     </div>
 
                     <p className="card-text text-muted">
-                      {article.content.length > 150
-                        ? `${article.content.substring(0, 150)}...`
-                        : article.content
-                      }
+                      {article.content.length > 200
+                        ? `${article.content.substring(0, 200)}...`
+                        : article.content}
                     </p>
 
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <small className="text-muted">
-                        <i className="fas fa-user me-1"></i>
-                        {article.author}
-                      </small>
-                      <small className="text-muted">
-                        <i className="fas fa-eye me-1"></i>
-                        {article.views}
-                      </small>
-                    </div>
-
                     <div className="d-flex justify-content-between align-items-center">
-                      <div className="text-warning">
-                        {'★'.repeat(Math.floor(article.rating))}
-                        <small className="text-muted ms-1">({article.rating})</small>
-                      </div>
-                      <div>
-                        {article.tags.slice(0, 2).map(tag => (
-                          <span key={tag} className="badge bg-secondary me-1">{tag}</span>
-                        ))}
-                      </div>
+                      <small className="text-muted">
+                        Автор: Пользователь {article.userId}
+                      </small>
+                      <a href={`/wiki/articles/${article.id}`} className="btn btn-outline-primary btn-sm">
+                        <i className="fas fa-arrow-right me-1"></i>
+                        Читать
+                      </a>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="col-lg-4">
+          {/* Категории */}
+          <div className="card mb-4">
+            <div className="card-body">
+              <h5 className="card-title">Категории</h5>
+              <div className="list-group list-group-flush">
+                <button
+                  className={`list-group-item list-group-item-action text-start ${!selectedCategory ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory('')}
+                >
+                  <i className="fas fa-list me-2"></i>
+                  Все статьи ({articles.length})
+                </button>
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    className={`list-group-item list-group-item-action text-start ${selectedCategory === category.id ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <i className="fas fa-folder me-2"></i>
+                    {category.name}
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
+          </div>
+
+          {/* Статистика */}
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Статистика</h5>
+              <div className="mb-3">
+                <div className="d-flex justify-content-between">
+                  <span>Всего статей:</span>
+                  <strong>{articles.length}</strong>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <span>Категорий:</span>
+                  <strong>{categories.length}</strong>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <span>Просмотров:</span>
+                  <strong>{articles.reduce((sum, article) => sum + article.viewsCount, 0)}</strong>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

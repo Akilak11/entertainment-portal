@@ -1,22 +1,40 @@
 import { useState } from 'react';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: e.target.type === 'checkbox' ? e.target.checked : e.target.value
+    }));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
+
+    if (!formData.email || !formData.password) {
+      alert('Заполните все поля');
+      return;
+    }
 
     setIsLoading(true);
 
     try {
       // В будущем подключить к реальному API
-      // const response = await fetch('/api/auth/login', {
+      // const response = await fetch('http://localhost:3000/api/auth/login', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
+      //   body: JSON.stringify({
+      //     email: formData.email,
+      //     password: formData.password,
+      //     rememberMe: formData.rememberMe
+      //   })
       // });
       // const data = await response.json();
 
@@ -24,7 +42,8 @@ export default function LoginPage() {
       setTimeout(() => {
         alert('Вход выполнен! (демо режим)');
         setIsLoading(false);
-      }, 1000);
+        // В будущем: router.push('/dashboard')
+      }, 1500);
 
     } catch (error) {
       console.error('Ошибка входа:', error);
@@ -35,13 +54,13 @@ export default function LoginPage() {
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-5">
+        <div className="col-md-8 col-lg-6">
           <div className="card shadow">
             <div className="card-body p-5">
               <div className="text-center mb-4">
                 <i className="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
                 <h2 className="mb-2">Вход в аккаунт</h2>
-                <p className="text-muted">Войдите в свой аккаунт для доступа к порталу</p>
+                <p className="text-muted">Добро пожаловать обратно!</p>
               </div>
 
               <form onSubmit={handleLogin}>
@@ -51,8 +70,8 @@ export default function LoginPage() {
                     type="email"
                     className="form-control form-control-lg"
                     id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={handleInputChange('email')}
                     placeholder="Введите ваш email"
                     required
                   />
@@ -64,16 +83,22 @@ export default function LoginPage() {
                     type="password"
                     className="form-control form-control-lg"
                     id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={handleInputChange('password')}
                     placeholder="Введите пароль"
                     required
                   />
                 </div>
 
                 <div className="mb-3 form-check">
-                  <input type="checkbox" className="form-check-input" id="remember" />
-                  <label className="form-check-label" htmlFor="remember">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={handleInputChange('rememberMe')}
+                  />
+                  <label className="form-check-label" htmlFor="rememberMe">
                     Запомнить меня
                   </label>
                 </div>
@@ -81,7 +106,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg w-100 mb-3"
-                  disabled={!email || !password || isLoading}
+                  disabled={!formData.email || !formData.password || isLoading}
                 >
                   {isLoading ? (
                     <>
@@ -122,6 +147,13 @@ export default function LoginPage() {
                   <i className="fab fa-telegram me-2"></i>
                   Telegram
                 </button>
+              </div>
+
+              {/* Ссылка на восстановление пароля */}
+              <div className="text-center mt-3">
+                <a href="/forgot-password" className="text-decoration-none small text-muted">
+                  Забыли пароль?
+                </a>
               </div>
             </div>
           </div>
