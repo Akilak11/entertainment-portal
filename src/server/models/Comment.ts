@@ -69,3 +69,4 @@ export class CommentModel {
     console.log(`Лайк добавлен к комментарию ${id}`);
   }
 }
+

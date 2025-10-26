@@ -38,3 +38,4 @@ export const createTopicService = async (
 export const incrementTopicViews = async (id: string) => {
   await ForumTopicModel.incrementViews(id);
 };
+

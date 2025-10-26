@@ -22,3 +22,4 @@ export const createCommentService = async (
 export const likeCommentService = async (id: string): Promise<void> => {
   await CommentModel.incrementLikes(id);
 };
+

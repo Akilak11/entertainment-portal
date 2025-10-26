@@ -53,9 +53,17 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 **Environment Variables (добавьте эти):**
 ```env
 NODE_ENV=production
-JWT_SECRET=your-super-secret-key-here
-JWT_REFRESH_SECRET=your-refresh-secret-key-here
+JWT_SECRET=your-super-secret-jwt-key-here-generate-random-string-minimum-32-characters-long
+JWT_REFRESH_SECRET=your-refresh-secret-key-here-different-random-string-minimum-32-characters-long
 LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
+```
+
+**💡 Генерация ключей:** Запустите `.\generate-secrets.bat` для генерации уникальных ключей
+
+**⚠️ ВАЖНО:** После создания баз данных добавьте их URL в переменные окружения:
+```env
+DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
+REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 ```
 
 ### 2.4 Создайте базы данных
@@ -70,12 +78,26 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
    - Назовите `entertainment-portal-redis`
    - Скопируйте `REDIS_URL`
 
-### 2.5 Обновите переменные окружения
-В Web Service settings добавьте:
+### 2.5 Подключите базы данных
+В Environment Variables добавьте:
 ```env
 DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
 REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 ```
+
+### 2.6 Настройте Advanced (продвинутые настройки)
+
+**Secret Files:** Не нужны для JWT ключей (используйте Environment Variables)
+
+**Health Check Path:** `/health` ✅ (уже заполнен правильно)
+
+**Pre-Deploy Command:** Оставьте пустым ✅ (не нужен для этого проекта)
+
+**Auto-Deploy:** `On Commit` ✅ (автоматическое развертывание при push в Git)
+
+**Build Filters:** Оставьте по умолчанию ✅ (Included Paths и Ignored Paths пустые)
+
+**💡 Ничего дополнительно заполнять не нужно!**
 
 ---
 

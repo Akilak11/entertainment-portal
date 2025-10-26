@@ -104,3 +104,4 @@ export class ForumTopicModel {
     console.log(`Просмотр добавлен к топику ${id}`);
   }
 }
+

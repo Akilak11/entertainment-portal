@@ -11,8 +11,8 @@
     "build:server": "tsc && tsc-alias",
     "build:client": "cd src/client && npm run build",
     "start": "node dist/server/index.js",
-    "railway:build": "npm run build:server",
-    "railway:start": "npm start",
+    "render:build": "npm run build:server",
+    "render:start": "npm start",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit"

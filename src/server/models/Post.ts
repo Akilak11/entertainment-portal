@@ -146,3 +146,4 @@ export class PostModel {
     console.log(`Лайк убран с поста ${id}`);
   }
 }
+

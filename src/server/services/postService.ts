@@ -36,3 +36,4 @@ export const likePostService = async (id: string): Promise<void> => {
 export const unlikePostService = async (id: string): Promise<void> => {
   await PostModel.decrementLikes(id);
 };
+
