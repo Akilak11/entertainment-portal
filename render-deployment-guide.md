@@ -60,6 +60,12 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 
 **💡 Генерация ключей:** Запустите `.\generate-secrets.bat` для генерации уникальных ключей
 
+**Пример сгенерированных ключей:**
+```env
+JWT_SECRET=abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
+JWT_REFRESH_SECRET=xyz987wvu654tsr321qpo098mlk765jih432gfe109dcb876
+```
+
 **⚠️ ВАЖНО:** После создания баз данных добавьте их URL в переменные окружения:
 ```env
 DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
