@@ -59,16 +59,23 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 ```
 
 ### ШАГ 4: Создайте базы данных
-1. В Dashboard нажмите **"New+"** → **"PostgreSQL"**
-2. Выберите **Free** план
-3. Назовите `entertainment-portal-db`
-4. Скопируйте `DATABASE_URL`
+Из ваших скриншотов видно, что интерфейс Render другой. Вот правильные шаги:
 
-5. Аналогично создайте **Redis**:
-   - **"New+"** → **"Key Value"**
-   - **Free** план
-   - Назовите `entertainment-portal-redis`
-   - Скопируйте `REDIS_URL`
+1. **PostgreSQL:**
+   - В Dashboard нажмите **"New"** (зеленая кнопка)
+   - Выберите **"PostgreSQL"**
+   - Выберите **"Free"** план
+   - Назовите: `entertainment-portal-db`
+   - Нажмите **"Create PostgreSQL"**
+   - Скопируйте `DATABASE_URL` из настроек (Internal Database URL)
+
+2. **Redis:**
+   - Снова нажмите **"New"** (зеленая кнопка)
+   - Выберите **"Redis"** (или "Key Value" если Redis нет)
+   - Выберите **"Free"** план
+   - Назовите: `entertainment-portal-redis`
+   - Нажмите **"Create Redis"**
+   - Скопируйте `REDIS_URL` из настроек
 
 ### ШАГ 5: Подключите базы данных
 В Environment Variables добавьте:
@@ -112,26 +119,62 @@ REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 
 ---
 
+## 🚨 **ПРОБЛЕМЫ ИЗ ЛОГА - ИСПРАВЛЕНИЯ:**
+
+### TypeScript ошибки:
+✅ **УЖЕ ИСПРАВЛЕНО** - типы перемещены в `dependencies`
+
+### Базы данных:
+Из ваших скриншотов видно, что нужно создавать базы данных **ДО** создания Web Service:
+
+1. **Сначала создайте PostgreSQL:**
+   - Dashboard → **"New"** → **"PostgreSQL"**
+   - Free план
+   - Название: `entertainment-portal-db`
+
+2. **Затем создайте Redis:**
+   - Dashboard → **"New"** → **"Redis"**
+   - Free план
+   - Название: `entertainment-portal-redis`
+
+3. **Затем создайте Web Service:**
+   - Dashboard → **"New"** → **"Web Service"**
+   - Выберите ваш GitHub репозиторий
+   - Настройки как выше
+
+4. **В Environment Variables Web Service добавьте:**
+```env
+DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
+REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
+```
+
+---
+
 ## 🎯 **Итоговые настройки:**
 
 ```cmd
-Source Code:
-- Git Provider: Public Git Repository ✅
-- Repository: https://github.com/Akilak11/entertainment-portal ✅
+ПОРЯДОК ДЕЙСТВИЙ:
+1. Создать PostgreSQL базу
+2. Создать Redis базу
+3. Создать Web Service (с настройками ниже)
 
-Settings:
-- Name: entertainment-portal ✅
-- Language: Node (исправьте!)
-- Branch: main ✅
-- Region: Frankfurt (EU Central) ✅
-- Root Directory: (пустое) ✅
+WEB SERVICE НАСТРОЙКИ:
+- Name: entertainment-portal
+- Language: Node
+- Branch: main
+- Region: Frankfurt (EU Central)
+- Root Directory: (пустое)
+- Build Command: npm install && npm run build
+- Start Command: npm start
+- Instance Type: Free
 
-Build Settings:
-- Build Command: npm install && npm run build (исправьте!)
-- Start Command: npm start (исправьте!)
-
-Environment Variables: (добавьте вышеуказанные)
-Instance Type: Free ✅
+ENVIRONMENT VARIABLES:
+NODE_ENV=production
+JWT_SECRET=your-secret-key-here
+JWT_REFRESH_SECRET=your-refresh-secret-here
+LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
+DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
+REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 ```
 
 **Теперь нажмите "Deploy Web Service" и Render развернет ваш портал!** 🚀
