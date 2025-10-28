@@ -46,9 +46,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Serve Next.js static files
-app.use('/_next', express.static(path.join(__dirname, '../client/.next')));
-app.use(express.static(path.join(__dirname, '../client/public')));
+// Serve Next.js static export files
+app.use(express.static(path.join(__dirname, '../client/out')));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -64,63 +63,61 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/translator', translatorRoutes);
 app.use('/api/wiki', wikiRoutes);
 
-// SPA fallback - serve static files or Next.js app for all non-API routes
+// SPA fallback - serve static export files for all non-API routes
 app.get('*', (req, res) => {
-  // First, try to serve static index.html from public folder
-  const staticIndexPath = path.join(__dirname, '../client/public/index.html');
-  if (fs.existsSync(staticIndexPath)) {
-    console.log('Serving static index.html from public folder');
-    return res.sendFile(staticIndexPath);
+  // For static export, serve index.html for all routes
+  const indexPath = path.join(__dirname, '../client/out/index.html');
+
+  if (fs.existsSync(indexPath)) {
+    console.log(`Serving static export index.html for route: ${req.path}`);
+    return res.sendFile(indexPath);
   }
 
-  // Try to serve index.html from different possible locations
-  const possiblePaths = [
-    path.join(__dirname, '../client/out/index.html'), // for static export
-    path.join(__dirname, '../client/.next/server/app/index.html'), // for app directory
-    path.join(__dirname, '../client/.next/server/pages/index.html'), // for pages directory
-  ];
+  // Check if it's a static file request (css, js, images, etc.)
+  const staticFilePath = path.join(__dirname, '../client/out', req.path);
+  if (fs.existsSync(staticFilePath) && fs.statSync(staticFilePath).isFile()) {
+    return res.sendFile(staticFilePath);
+  }
 
-  for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      console.log(`Serving Next.js index.html from: ${filePath}`);
-      return res.sendFile(filePath);
+  // Fallback - return debug info
+  console.log('Static export index.html not found at:', indexPath);
+  console.log('Available files in out directory:');
+  try {
+    const outDir = path.join(__dirname, '../client/out');
+    if (fs.existsSync(outDir)) {
+      const files = fs.readdirSync(outDir, { recursive: true });
+      console.log('Files:', files.slice(0, 10)); // Show first 10 files
     }
+  } catch (err) {
+    console.log('Error reading out directory:', err);
   }
 
-  // Log what we're looking for
-  console.log('Static file paths checked:');
-  console.log('- Static index:', staticIndexPath, fs.existsSync(staticIndexPath));
-  possiblePaths.forEach(p => console.log(`- Next.js path: ${p} - ${fs.existsSync(p)}`));
-
-  // Fallback - return a simple HTML page with debug info
+  // Simple fallback HTML
   res.send(`
     <!DOCTYPE html>
     <html lang="ru">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Развлекательный Портал - Debug</title>
+        <title>Развлекательный Портал - Static Export</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container mt-5">
             <div class="text-center">
-                <h1 class="display-4 text-warning">🔧 Debug Mode</h1>
-                <p class="lead">Сервер работает, но статические файлы не найдены</p>
-                <div class="alert alert-info mt-4">
-                    <h5>Проверенные пути:</h5>
-                    <ul class="text-start">
-                        <li><code>../client/public/index.html</code> - ${fs.existsSync(path.join(__dirname, '../client/public/index.html')) ? '✅ Найден' : '❌ Не найден'}</li>
-                        <li><code>../client/out/index.html</code> - ${fs.existsSync(path.join(__dirname, '../client/out/index.html')) ? '✅ Найден' : '❌ Не найден'}</li>
-                        <li><code>../client/.next/server/app/index.html</code> - ${fs.existsSync(path.join(__dirname, '../client/.next/server/app/index.html')) ? '✅ Найден' : '❌ Не найден'}</li>
-                        <li><code>../client/.next/server/pages/index.html</code> - ${fs.existsSync(path.join(__dirname, '../client/.next/server/pages/index.html')) ? '✅ Найден' : '❌ Не найден'}</li>
-                    </ul>
+                <h1 class="display-4 text-info">📦 Static Export Mode</h1>
+                <p class="lead">Next.js static export не найден, но сервер работает</p>
+                <div class="alert alert-warning mt-4">
+                    <strong>Путь к index.html:</strong> <code>${indexPath}</code><br>
+                    <strong>Найден файл:</strong> ${fs.existsSync(indexPath) ? '✅ Да' : '❌ Нет'}
                 </div>
                 <div class="mt-4">
-                    <a href="/social" class="btn btn-primary me-2">Соцсеть</a>
-                    <a href="/forum" class="btn btn-success me-2">Форум</a>
-                    <a href="/shop" class="btn btn-info me-2">Магазин</a>
-                    <a href="/api/health" class="btn btn-secondary">API Health Check</a>
+                    <a href="/api/health" class="btn btn-success me-2">
+                        <i class="fas fa-heartbeat me-2"></i>API Health Check
+                    </a>
+                    <a href="https://github.com/Akilak11/entertainment-portal" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-github me-2"></i>GitHub Repo
+                    </a>
                 </div>
             </div>
         </div>

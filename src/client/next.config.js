@@ -1,20 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+  output: 'export',
+  trailingSlash: true,
   images: {
     domains: ['localhost', 'your-domain.com'],
     formats: ['image/webp', 'image/avif'],
+    unoptimized: true, // Required for static export
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3000/api/:path*',
-      },
-    ];
-  },
+  // Remove rewrites for static export - API calls will be handled by Express
 };
 
 module.exports = nextConfig;
