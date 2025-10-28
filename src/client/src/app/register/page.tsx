@@ -140,103 +140,168 @@ export default function RegisterPage() {
 
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="firstName" className="form-label">Имя</label>
+                    <label htmlFor="firstName" className="form-label">
+                      Имя {!formData.firstName && <span className="text-danger">*</span>}
+                    </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control ${formData.firstName ? 'is-valid' : 'is-invalid'}`}
                       id="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange('firstName')}
                       placeholder="Введите имя"
                       required
                     />
+                    {!formData.firstName && (
+                      <div className="invalid-feedback">Имя обязательно для заполнения</div>
+                    )}
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="lastName" className="form-label">Фамилия</label>
+                    <label htmlFor="lastName" className="form-label">
+                      Фамилия {!formData.lastName && <span className="text-danger">*</span>}
+                    </label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={`form-control ${formData.lastName ? 'is-valid' : 'is-invalid'}`}
                       id="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange('lastName')}
                       placeholder="Введите фамилию"
                       required
                     />
+                    {!formData.lastName && (
+                      <div className="invalid-feedback">Фамилия обязательна для заполнения</div>
+                    )}
                   </div>
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="username" className="form-label">Имя пользователя</label>
+                  <label htmlFor="username" className="form-label">
+                    Имя пользователя {!formData.username && <span className="text-danger">*</span>}
+                  </label>
                   <input
                     type="text"
-                    className="form-control"
+                    className={`form-control ${formData.username ? 'is-valid' : 'is-invalid'}`}
                     id="username"
                     value={formData.username}
                     onChange={handleInputChange('username')}
                     placeholder="Придумайте уникальное имя"
                     required
                   />
+                  {!formData.username && (
+                    <div className="invalid-feedback">Username обязателен для заполнения</div>
+                  )}
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Email</label>
+                  <label htmlFor="email" className="form-label">
+                    Email {!formData.email && <span className="text-danger">*</span>}
+                  </label>
                   <input
                     type="email"
-                    className="form-control"
+                    className={`form-control ${formData.email ? 'is-valid' : 'is-invalid'}`}
                     id="email"
                     value={formData.email}
                     onChange={handleInputChange('email')}
                     placeholder="Введите email"
                     required
                   />
+                  {!formData.email && (
+                    <div className="invalid-feedback">Email обязателен для заполнения</div>
+                  )}
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Пароль</label>
+                  <label htmlFor="password" className="form-label">
+                    Пароль {!formData.password && <span className="text-danger">*</span>}
+                  </label>
                   <input
                     type="password"
-                    className="form-control"
+                    className={`form-control ${formData.password ? 'is-valid' : 'is-invalid'}`}
                     id="password"
                     value={formData.password}
                     onChange={handleInputChange('password')}
                     placeholder="Минимум 6 символов"
                     required
                   />
+                  {!formData.password && (
+                    <div className="invalid-feedback">Пароль обязателен для заполнения</div>
+                  )}
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label">Подтверждение пароля</label>
+                  <label htmlFor="confirmPassword" className="form-label">
+                    Подтверждение пароля {!formData.confirmPassword && <span className="text-danger">*</span>}
+                  </label>
                   <input
                     type="password"
-                    className="form-control"
+                    className={`form-control ${formData.confirmPassword ? 'is-valid' : 'is-invalid'}`}
                     id="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange('confirmPassword')}
                     placeholder="Повторите пароль"
                     required
                   />
+                  {!formData.confirmPassword && (
+                    <div className="invalid-feedback">Подтверждение пароля обязательно</div>
+                  )}
                 </div>
 
                 <div className="mb-3 form-check">
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className={`form-check-input ${agreeToTerms ? 'is-valid' : ''}`}
                     id="agree"
                     checked={agreeToTerms}
                     onChange={handleAgreeChange}
                     required
                   />
-                  <label className="form-check-label" htmlFor="agree">
+                  <label className={`form-check-label ${!agreeToTerms ? 'text-danger' : ''}`} htmlFor="agree">
                     Согласен с <a href="#" className="text-decoration-none">правилами использования</a>
+                    {!agreeToTerms && <span className="text-danger">*</span>}
                   </label>
+                  {!agreeToTerms && (
+                    <div className="form-text text-danger">Необходимо согласиться с правилами использования</div>
+                  )}
+                </div>
+
+                {/* Отладочная информация */}
+                <div className="mb-3">
+                  <small className="text-muted">
+                    <strong>Статус формы:</strong>
+                    <br />Имя: {formData.firstName ? '✅' : '❌'} |
+                    Фамилия: {formData.lastName ? '✅' : '❌'} |
+                    Username: {formData.username ? '✅' : '❌'} |
+                    Email: {formData.email ? '✅' : '❌'} |
+                    Пароль: {formData.password ? '✅' : '❌'} |
+                    Подтверждение: {formData.confirmPassword ? '✅' : '❌'} |
+                    Согласие: {agreeToTerms ? '✅' : '❌'}
+                  </small>
                 </div>
 
                 <button
                   type="submit"
-                  className="btn btn-success btn-lg w-100 mb-3"
+                  className={`btn btn-lg w-100 mb-3 ${
+                    (!formData.firstName || !formData.lastName || !formData.username ||
+                     !formData.email || !formData.password || !formData.confirmPassword ||
+                     !agreeToTerms || isLoading)
+                      ? 'btn-secondary'
+                      : 'btn-success'
+                  }`}
                   disabled={!formData.firstName || !formData.lastName || !formData.username ||
                            !formData.email || !formData.password || !formData.confirmPassword ||
                            !agreeToTerms || isLoading}
+                  title={
+                    !formData.firstName ? 'Заполните имя' :
+                    !formData.lastName ? 'Заполните фамилию' :
+                    !formData.username ? 'Заполните username' :
+                    !formData.email ? 'Заполните email' :
+                    !formData.password ? 'Заполните пароль' :
+                    !formData.confirmPassword ? 'Подтвердите пароль' :
+                    !agreeToTerms ? 'Согласитесь с правилами' :
+                    isLoading ? 'Идет регистрация...' :
+                    'Готово к регистрации'
+                  }
                 >
                   {isLoading ? (
                     <>
@@ -247,6 +312,11 @@ export default function RegisterPage() {
                     <>
                       <i className="fas fa-user-plus me-2"></i>
                       Зарегистрироваться
+                      {(!formData.firstName || !formData.lastName || !formData.username ||
+                        !formData.email || !formData.password || !formData.confirmPassword ||
+                        !agreeToTerms) && (
+                        <span className="ms-2">🔒</span>
+                      )}
                     </>
                   )}
                 </button>
