@@ -23,8 +23,8 @@
 Добавьте эти переменные:
 ```env
 NODE_ENV=production
-JWT_SECRET=your-super-secret-key-here-generate-random
-JWT_REFRESH_SECRET=your-refresh-secret-key-here-different
+JWT_SECRET=423468c3cff234fa43f03988199f4108
+JWT_REFRESH_SECRET=63db915de36516dba03a76f107281615
 LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 ```
 
@@ -53,8 +53,8 @@ Start Command: npm start
 ### ШАГ 3: Environment Variables
 ```env
 NODE_ENV=production
-JWT_SECRET=your-secret-key-here
-JWT_REFRESH_SECRET=your-refresh-secret-here
+JWT_SECRET=423468c3cff234fa43f03988199f4108
+JWT_REFRESH_SECRET=63db915de36516dba03a76f107281615
 LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 ```
 
@@ -168,8 +168,8 @@ WEB SERVICE НАСТРОЙКИ:
 
 ENVIRONMENT VARIABLES:
 NODE_ENV=production
-JWT_SECRET=your-secret-key-here
-JWT_REFRESH_SECRET=your-refresh-secret-here
+JWT_SECRET=423468c3cff234fa43f03988199f4108
+JWT_REFRESH_SECRET=63db915de36516dba03a76f107281615
 LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
 REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
