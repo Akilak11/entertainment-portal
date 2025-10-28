@@ -51,7 +51,7 @@ export default function ProfilePage() {
 function ProfileContent({ user, logout, formData, setFormData, isEditing, setIsEditing, isLoading, setIsLoading, message, setMessage, updateProfile }: any) {
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       [field]: e.target.value
     }));
