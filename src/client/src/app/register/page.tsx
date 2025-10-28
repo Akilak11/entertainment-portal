@@ -25,17 +25,10 @@ export default function RegisterPage() {
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log(`Input change: ${field} = "${value}"`);
-
-    setFormData(prev => {
-      const newData = {
-        ...prev,
-        [field]: value
-      };
-      console.log('New formData:', newData);
-      return newData;
-    });
-
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
     setTouchedFields(prev => ({
       ...prev,
       [field]: true
@@ -50,10 +43,7 @@ export default function RegisterPage() {
   };
 
   const handleAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    console.log(`Checkbox change: agreeToTerms = ${checked}`);
-
-    setAgreeToTerms(checked);
+    setAgreeToTerms(e.target.checked);
     setTouchedFields(prev => ({
       ...prev,
       agreeToTerms: true
@@ -63,16 +53,6 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Отладка состояния формы
-  useEffect(() => {
-    console.log('Form state updated:', {
-      formData,
-      agreeToTerms,
-      touchedFields,
-      isFormValid: formData.firstName && formData.lastName && formData.username &&
-                   formData.email && formData.password && formData.confirmPassword && agreeToTerms
-    });
-  }, [formData, agreeToTerms, touchedFields]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -341,26 +321,16 @@ export default function RegisterPage() {
                   )}
                 </div>
 
-                {/* Отладочная информация */}
-                <div className="mb-3 p-2 bg-light rounded">
+                {/* Статус формы */}
+                <div className="mb-3 text-center">
                   <small className="text-muted">
-                    <strong>Статус формы (обновляется в реальном времени):</strong>
-                    <br />Имя: <span className={formData.firstName ? 'text-success' : 'text-danger'}>{formData.firstName ? '✅' : '❌'}</span> "{formData.firstName}" |
-                    Фамилия: <span className={formData.lastName ? 'text-success' : 'text-danger'}>{formData.lastName ? '✅' : '❌'}</span> "{formData.lastName}" |
-                    Username: <span className={formData.username ? 'text-success' : 'text-danger'}>{formData.username ? '✅' : '❌'}</span> "{formData.username}" |
-                    Email: <span className={formData.email ? 'text-success' : 'text-danger'}>{formData.email ? '✅' : '❌'}</span> "{formData.email}" |
-                    Пароль: <span className={formData.password ? 'text-success' : 'text-danger'}>{formData.password ? '✅' : '❌'}</span> "{formData.password}" |
-                    Подтверждение: <span className={formData.confirmPassword ? 'text-success' : 'text-danger'}>{formData.confirmPassword ? '✅' : '❌'}</span> "{formData.confirmPassword}" |
-                    Согласие: <span className={agreeToTerms ? 'text-success' : 'text-danger'}>{agreeToTerms ? '✅' : '❌'}</span>
-                    <br /><strong>Кнопка активна:</strong> <span className={
-                      (formData.firstName && formData.lastName && formData.username &&
-                       formData.email && formData.password && formData.confirmPassword && agreeToTerms)
-                        ? 'text-success' : 'text-danger'
-                    }>
-                      {(formData.firstName && formData.lastName && formData.username &&
-                        formData.email && formData.password && formData.confirmPassword && agreeToTerms)
-                         ? '✅ ДА' : '❌ НЕТ'}
-                    </span>
+                    Имя: {formData.firstName ? '✅' : '❌'} |
+                    Фамилия: {formData.lastName ? '✅' : '❌'} |
+                    Username: {formData.username ? '✅' : '❌'} |
+                    Email: {formData.email ? '✅' : '❌'} |
+                    Пароль: {formData.password ? '✅' : '❌'} |
+                    Подтверждение: {formData.confirmPassword ? '✅' : '❌'} |
+                    Согласие: {agreeToTerms ? '✅' : '❌'}
                   </small>
                 </div>
 

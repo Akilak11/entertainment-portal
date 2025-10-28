@@ -31,10 +31,6 @@ const registerSchema = Joi.object({
     'string.min': 'Пароль должен содержать минимум 6 символов',
     'any.required': 'Пароль обязателен'
   }),
-  confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
-    'any.only': 'Пароли не совпадают',
-    'any.required': 'Подтверждение пароля обязательно'
-  }),
   firstName: Joi.string().max(50).optional(),
   lastName: Joi.string().max(50).optional()
 });
