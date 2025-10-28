@@ -41,13 +41,13 @@ export const register = async (userData: RegisterForm): Promise<{ user: User; ac
   const { email, username, password, firstName, lastName } = userData;
 
   // Hash password
-  const passwordHash = await bcrypt.hash(password, 12);
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   // Создаем пользователя в базе данных
   const user = await UserModel.create({
     email,
     username,
-    passwordHash,
+    passwordHash: hashedPassword,
     firstName,
     lastName
   });
