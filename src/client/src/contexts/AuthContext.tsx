@@ -55,9 +55,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Проверка токена при загрузке приложения
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('🔍 Checking auth on app load...');
       const token = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      console.log('📦 Stored tokens:', {
+        accessToken: token ? 'present' : 'missing',
+        refreshToken: refreshToken ? 'present' : 'missing'
+      });
+
       if (token) {
         try {
+          console.log('🔐 Validating access token...');
           // Проверяем токен на сервере
           const response = await fetch('/api/auth/me', {
             headers: {
@@ -65,17 +74,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
           });
 
+          console.log('📡 /api/auth/me response:', response.status);
+
           if (response.ok) {
             const data = await response.json();
+            console.log('✅ Token valid, setting user:', data.data.user);
             setUser(data.data.user);
           } else {
+            console.log('❌ Token invalid, trying refresh...');
             // Токен недействителен, пытаемся обновить
-            await refreshToken();
+            const refreshed = await refreshToken();
+            if (!refreshed) {
+              console.log('❌ Refresh failed, logging out');
+              logout();
+            }
           }
         } catch (error) {
-          console.error('Error checking auth:', error);
+          console.error('❌ Error checking auth:', error);
           logout();
         }
+      } else {
+        console.log('ℹ️ No access token found');
       }
       setIsLoading(false);
     };
@@ -129,10 +148,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const { user, accessToken, refreshToken } = data.data;
 
       // Сохраняем токены
+      console.log('💾 Saving tokens to localStorage:', { accessToken: 'present', refreshToken: 'present' });
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
       // Устанавливаем пользователя
+      console.log('👤 Setting user in state:', user);
       setUser(user);
 
     } catch (error: any) {
@@ -170,12 +191,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    console.log('🚪 Logging out, clearing tokens and state');
+
     // Очищаем локальное хранилище
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    console.log('🗑️ Cleared localStorage tokens');
 
     // Сбрасываем состояние
     setUser(null);
+    console.log('🔄 Reset user state to null');
   };
 
   const updateProfile = async (data: Partial<User>) => {

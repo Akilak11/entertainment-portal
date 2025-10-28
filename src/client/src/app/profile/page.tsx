@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, logout, updateProfile } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -15,22 +16,39 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  if (!isAuthenticated || !user) {
-    return (
-      <div className="container py-5">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className="alert alert-warning text-center">
-              <i className="fas fa-exclamation-triangle fa-3x mb-3"></i>
-              <h4>Доступ запрещен</h4>
-              <p>Для просмотра профиля необходимо войти в систему.</p>
-              <a href="/login" className="btn btn-primary">Войти</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Обновляем formData когда пользователь загружается
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        username: user.username || '',
+        bio: user.bio || ''
+      });
+    }
+  }, [user]);
+
+  return (
+    <ProtectedRoute>
+      <ProfileContent
+        user={user}
+        logout={logout}
+        formData={formData}
+        setFormData={setFormData}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        message={message}
+        setMessage={setMessage}
+        updateProfile={updateProfile}
+      />
+    </ProtectedRoute>
+  );
+}
+
+// Отдельный компонент для контента профиля
+function ProfileContent({ user, logout, formData, setFormData, isEditing, setIsEditing, isLoading, setIsLoading, message, setMessage, updateProfile }: any) {
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({

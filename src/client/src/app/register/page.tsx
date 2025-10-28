@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -54,6 +56,14 @@ export default function RegisterPage() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Перенаправляем если уже аутентифицирован
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      console.log('🔄 User already authenticated, redirecting to home');
+      router.push('/');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
 
   const handleRegister = async (e: React.FormEvent) => {
