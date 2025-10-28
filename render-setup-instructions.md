@@ -59,23 +59,20 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 ```
 
 ### ШАГ 4: Создайте базы данных
-Из ваших скриншотов видно, что интерфейс Render другой. Вот правильные шаги:
+⚠️ **ВАЖНО:** Если в "New" нет PostgreSQL/Redis - смотрите `render-troubleshooting.md`!
 
+**Вариант 1 - Если есть в New:**
 1. **PostgreSQL:**
-   - В Dashboard нажмите **"New"** (зеленая кнопка)
-   - Выберите **"PostgreSQL"**
-   - Выберите **"Free"** план
-   - Назовите: `entertainment-portal-db`
-   - Нажмите **"Create PostgreSQL"**
-   - Скопируйте `DATABASE_URL` из настроек (Internal Database URL)
+   - Dashboard → **"New"** → **"PostgreSQL"** → Free → `entertainment-portal-db`
 
 2. **Redis:**
-   - Снова нажмите **"New"** (зеленая кнопка)
-   - Выберите **"Redis"** (или "Key Value" если Redis нет)
-   - Выберите **"Free"** план
-   - Назовите: `entertainment-portal-redis`
-   - Нажмите **"Create Redis"**
-   - Скопируйте `REDIS_URL` из настроек
+   - Dashboard → **"New"** → **"Redis"** → Free → `entertainment-portal-redis`
+
+**Вариант 2 - Если нет в New:**
+1. **Ищите раздел "Databases" в левом меню**
+2. **Или используйте внешние сервисы:**
+   - **PostgreSQL:** https://neon.tech/ (бесплатно)
+   - **Redis:** https://redis.com/ (бесплатно)
 
 ### ШАГ 5: Подключите базы данных
 В Environment Variables добавьте:
