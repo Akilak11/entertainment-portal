@@ -28,7 +28,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Отключаем CSP для работы Bootstrap
+}));
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3001',
   credentials: true
