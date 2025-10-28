@@ -11,6 +11,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: ''
   });
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +21,10 @@ export default function RegisterPage() {
     }));
   };
 
+  const handleAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAgreeToTerms(e.target.checked);
+  };
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -27,6 +32,11 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+
+    if (!agreeToTerms) {
+      setError('Необходимо согласиться с правилами использования');
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Пароли не совпадают');
@@ -208,7 +218,14 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="mb-3 form-check">
-                  <input type="checkbox" className="form-check-input" id="agree" required />
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="agree"
+                    checked={agreeToTerms}
+                    onChange={handleAgreeChange}
+                    required
+                  />
                   <label className="form-check-label" htmlFor="agree">
                     Согласен с <a href="#" className="text-decoration-none">правилами использования</a>
                   </label>
@@ -218,7 +235,8 @@ export default function RegisterPage() {
                   type="submit"
                   className="btn btn-success btn-lg w-100 mb-3"
                   disabled={!formData.firstName || !formData.lastName || !formData.username ||
-                           !formData.email || !formData.password || !formData.confirmPassword || isLoading}
+                           !formData.email || !formData.password || !formData.confirmPassword ||
+                           !agreeToTerms || isLoading}
                 >
                   {isLoading ? (
                     <>
