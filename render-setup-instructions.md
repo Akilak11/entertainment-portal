@@ -77,9 +77,20 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 
 ### ШАГ 5: Подключите базы данных
 В Environment Variables добавьте:
+
+**Для PostgreSQL (используйте Internal URL из настроек базы данных):**
 ```env
-DATABASE_URL=${{ entertainment-portal-db.DATABASE_URL }}
+DATABASE_URL=postgresql://entertainment_portal_db_user:TTCVaTzwXIcQnRxLjYUYBqNdToN6lyXY@dpg-d40g953ipnbc73b1j3h0-a/entertainment_portal_db
+```
+
+**Для Redis:**
+```env
 REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
+```
+
+**ИЛИ если Redis еще не создан:**
+```env
+REDIS_URL=redis://your-redis-url-here
 ```
 
 ---
