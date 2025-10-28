@@ -19,6 +19,9 @@ import wikiRoutes from './routes/wiki';
 import { errorHandler } from './middleware/errorHandler';
 import { notFound } from './middleware/notFound';
 
+// Utils
+import { initDatabase } from './utils/initDatabase';
+
 dotenv.config();
 
 const app = express();
@@ -191,9 +194,21 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API endpoint не найден' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Сервер запущен на порту ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-});
+// Инициализация базы данных и запуск сервера
+const startServer = async () => {
+  try {
+    await initDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Сервер запущен на порту ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    });
+  } catch (error) {
+    console.error('❌ Ошибка запуска сервера:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 export default app;
