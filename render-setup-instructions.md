@@ -59,20 +59,21 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 ```
 
 ### ШАГ 4: Создайте базы данных
-⚠️ **ВАЖНО:** Если в "New" нет PostgreSQL/Redis - смотрите `render-troubleshooting.md`!
+Из вашего описания меню, вот правильные шаги:
 
-**Вариант 1 - Если есть в New:**
 1. **PostgreSQL:**
-   - Dashboard → **"New"** → **"PostgreSQL"** → Free → `entertainment-portal-db`
+   - В Dashboard нажмите **"New"** → **"postgres"**
+   - Выберите **"Free"** план
+   - Назовите: `entertainment-portal-db`
+   - Нажмите **"Create database"**
+   - Скопируйте `DATABASE_URL` из настроек
 
-2. **Redis:**
-   - Dashboard → **"New"** → **"Redis"** → Free → `entertainment-portal-redis`
-
-**Вариант 2 - Если нет в New:**
-1. **Ищите раздел "Databases" в левом меню**
-2. **Или используйте внешние сервисы:**
-   - **PostgreSQL:** https://neon.tech/ (бесплатно)
-   - **Redis:** https://redis.com/ (бесплатно)
+2. **Redis (Key Value):**
+   - В Dashboard нажмите **"New"** → **"key value"**
+   - Выберите **"Free"** план
+   - Назовите: `entertainment-portal-redis`
+   - Нажмите **"Create database"**
+   - Скопируйте `REDIS_URL` из настроек
 
 ### ШАГ 5: Подключите базы данных
 В Environment Variables добавьте:
@@ -122,20 +123,20 @@ REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 ✅ **УЖЕ ИСПРАВЛЕНО** - типы перемещены в `dependencies`
 
 ### Базы данных:
-Из ваших скриншотов видно, что нужно создавать базы данных **ДО** создания Web Service:
+Из вашего описания меню, вот правильные шаги:
 
 1. **Сначала создайте PostgreSQL:**
-   - Dashboard → **"New"** → **"PostgreSQL"**
+   - Dashboard → **"New"** → **"postgres"**
    - Free план
    - Название: `entertainment-portal-db`
 
 2. **Затем создайте Redis:**
-   - Dashboard → **"New"** → **"Redis"**
+   - Dashboard → **"New"** → **"key value"**
    - Free план
    - Название: `entertainment-portal-redis`
 
 3. **Затем создайте Web Service:**
-   - Dashboard → **"New"** → **"Web Service"**
+   - Dashboard → **"New"** → **"web service"**
    - Выберите ваш GitHub репозиторий
    - Настройки как выше
 
@@ -151,8 +152,8 @@ REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 
 ```cmd
 ПОРЯДОК ДЕЙСТВИЙ:
-1. Создать PostgreSQL базу
-2. Создать Redis базу
+1. Создать PostgreSQL базу (New → postgres)
+2. Создать Redis базу (New → key value)
 3. Создать Web Service (с настройками ниже)
 
 WEB SERVICE НАСТРОЙКИ:
