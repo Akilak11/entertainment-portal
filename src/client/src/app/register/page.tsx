@@ -20,38 +20,83 @@ export default function RegisterPage() {
     }));
   };
 
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Пароли не совпадают');
+      setError('Пароли не совпадают');
       return;
     }
 
     if (formData.password.length < 6) {
-      alert('Пароль должен содержать минимум 6 символов');
+      setError('Пароль должен содержать минимум 6 символов');
+      return;
+    }
+
+    // Проверка username (только буквы и цифры)
+    if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
+      setError('Username может содержать только буквы и цифры');
+      return;
+    }
+
+    if (formData.username.length < 3) {
+      setError('Username должен содержать минимум 3 символа');
+      return;
+    }
+
+    if (formData.username.length > 30) {
+      setError('Username не может превышать 30 символов');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // В будущем подключить к реальному API
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-      // const data = await response.json();
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName
+        })
+      });
 
-      // Симуляция регистрации
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Ошибка регистрации');
+      }
+
+      setSuccess(data.message || 'Регистрация успешна!');
+      // Очистить форму
+      setFormData({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      });
+
+      // Перенаправить на страницу входа через 2 секунды
       setTimeout(() => {
-        alert('Регистрация выполнена! (демо режим)');
-        setIsLoading(false);
-      }, 1500);
+        window.location.href = '/login';
+      }, 2000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Ошибка регистрации:', error);
+      setError(error.message || 'Произошла ошибка при регистрации');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -69,6 +114,20 @@ export default function RegisterPage() {
               </div>
 
               <form onSubmit={handleRegister}>
+                {/* Сообщения об успехе и ошибках */}
+                {error && (
+                  <div className="alert alert-danger" role="alert">
+                    <i className="fas fa-exclamation-triangle me-2"></i>
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="alert alert-success" role="alert">
+                    <i className="fas fa-check-circle me-2"></i>
+                    {success}
+                  </div>
+                )}
+
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label htmlFor="firstName" className="form-label">Имя</label>
