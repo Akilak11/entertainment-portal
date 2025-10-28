@@ -12,7 +12,7 @@ export default function LoginPage() {
     password: '',
     rememberMe: false
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ export default function LoginPage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       await login(formData.email, formData.password, formData.rememberMe);
@@ -56,7 +56,7 @@ export default function LoginPage() {
       console.error('Ошибка входа:', error);
       setError(error.message || 'Произошла ошибка при входе');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -129,9 +129,9 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg w-100 mb-3"
-                  disabled={!formData.email || !formData.password || isLoading}
+                  disabled={!formData.email || !formData.password || isSubmitting}
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
                       Вход...

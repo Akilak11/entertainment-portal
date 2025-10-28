@@ -16,7 +16,7 @@ export default function RegisterPage() {
     confirmPassword: ''
   });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [touchedFields, setTouchedFields] = useState({
     firstName: false,
     lastName: false,
@@ -102,7 +102,7 @@ export default function RegisterPage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       await register({
@@ -132,7 +132,7 @@ export default function RegisterPage() {
       console.error('Ошибка регистрации:', error);
       setError(error.message || 'Произошла ошибка при регистрации');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -338,7 +338,7 @@ export default function RegisterPage() {
                   className={`btn btn-lg w-100 mb-3 ${
                     (!formData.firstName || !formData.lastName || !formData.username ||
                      !formData.email || !formData.password || !formData.confirmPassword ||
-                     !agreeToTerms || isLoading)
+                           !agreeToTerms || isSubmitting)
                       ? 'btn-secondary'
                       : 'btn-success'
                   }`}
@@ -353,11 +353,11 @@ export default function RegisterPage() {
                     !formData.password ? 'Заполните пароль' :
                     !formData.confirmPassword ? 'Подтвердите пароль' :
                     !agreeToTerms ? 'Согласитесь с правилами' :
-                    isLoading ? 'Идет регистрация...' :
+                    isSubmitting ? 'Идет регистрация...' :
                     'Готово к регистрации'
                   }
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status"></span>
                       Создание аккаунта...
