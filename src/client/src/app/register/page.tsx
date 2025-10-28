@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function RegisterPage() {
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -93,27 +95,16 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          username: formData.username,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName
-        })
+      await register({
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName
       });
 
-      const data = await response.json();
+      setSuccess('Регистрация успешна! Выполняется автоматический вход...');
 
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Ошибка регистрации');
-      }
-
-      setSuccess(data.message || 'Регистрация успешна!');
       // Очистить форму
       setFormData({
         firstName: '',
@@ -124,10 +115,8 @@ export default function RegisterPage() {
         confirmPassword: ''
       });
 
-      // Перенаправить на страницу входа через 2 секунды
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000);
+      // AuthContext автоматически выполнит вход после регистрации
+      // Перенаправление произойдет в AuthContext
 
     } catch (error: any) {
       console.error('Ошибка регистрации:', error);

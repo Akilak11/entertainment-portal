@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
+import Navigation from '@/components/Navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,8 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
-      <head>
+    <AuthProvider>
+      <html lang="ru">
+        <head>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
         <style>{`
@@ -58,58 +61,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="bg-gradient-primary">
-          {/* Navigation */}
-          <nav className="navbar navbar-expand-lg navbar-dark bg-transparent">
-            <div className="container">
-              <a className="navbar-brand fw-bold fs-3" href="/">
-                <i className="fas fa-star me-2 text-warning"></i>
-                Развлекательный Портал
-              </a>
-
-              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-
-              <div className="collapse navbar-collapse" id="navbarNav">
-                <ul className="navbar-nav me-auto">
-                  <li className="nav-item">
-                    <a className="nav-link" href="/social">
-                      <i className="fas fa-users me-1"></i>Соцсеть
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/forum">
-                      <i className="fas fa-comments me-1"></i>Форум
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/shop">
-                      <i className="fas fa-shopping-cart me-1"></i>Магазин
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/translator">
-                      <i className="fas fa-language me-1"></i>Переводчик
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="/wiki">
-                      <i className="fas fa-book me-1"></i>Вики
-                    </a>
-                  </li>
-                </ul>
-
-                <div className="d-flex">
-                  <a href="/login" className="btn btn-outline-light me-2">
-                    <i className="fas fa-sign-in-alt me-1"></i>Вход
-                  </a>
-                  <a href="/register" className="btn btn-warning">
-                    <i className="fas fa-user-plus me-1"></i>Регистрация
-                  </a>
-                </div>
-              </div>
-            </div>
-          </nav>
+          <Navigation />
 
           {/* Main content */}
           <main className="container py-5">
@@ -163,5 +115,6 @@ export default function RootLayout({
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
       </body>
     </html>
+    </AuthProvider>
   );
 }
