@@ -134,7 +134,7 @@ app.get('*', (req, res) => {
         const contents = fs.readdirSync(dir);
         console.log(`  Contents: ${contents.join(', ')}`);
       } catch (err) {
-        console.log(`  Error reading: ${err.message}`);
+        console.log(`  Error reading: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
   });
