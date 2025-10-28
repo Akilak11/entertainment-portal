@@ -10,6 +10,7 @@ export interface User {
   bio?: string;
   isVerified: boolean;
   role: 'user' | 'moderator' | 'admin';
+  passwordHash?: string; // Для внутренней логики аутентификации
   createdAt: Date;
   updatedAt: Date;
 }

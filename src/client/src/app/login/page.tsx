@@ -17,38 +17,55 @@ export default function LoginPage() {
     }));
   };
 
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     if (!formData.email || !formData.password) {
-      alert('Заполните все поля');
+      setError('Заполните все поля');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // В будущем подключить к реальному API
-      // const response = await fetch('http://localhost:3000/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: formData.email,
-      //     password: formData.password,
-      //     rememberMe: formData.rememberMe
-      //   })
-      // });
-      // const data = await response.json();
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          rememberMe: formData.rememberMe
+        })
+      });
 
-      // Симуляция входа
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Ошибка входа');
+      }
+
+      setSuccess('Вход выполнен успешно!');
+
+      // Сохраняем токены в localStorage (в будущем можно использовать cookies)
+      localStorage.setItem('accessToken', data.data.accessToken);
+      localStorage.setItem('refreshToken', data.data.refreshToken);
+
+      // Перенаправляем на главную страницу через 2 секунды
       setTimeout(() => {
-        alert('Вход выполнен! (демо режим)');
-        setIsLoading(false);
-        // В будущем: router.push('/dashboard')
-      }, 1500);
+        window.location.href = '/';
+      }, 2000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Ошибка входа:', error);
+      setError(error.message || 'Произошла ошибка при входе');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -66,6 +83,20 @@ export default function LoginPage() {
               </div>
 
               <form onSubmit={handleLogin}>
+                {/* Сообщения об успехе и ошибках */}
+                {error && (
+                  <div className="alert alert-danger" role="alert">
+                    <i className="fas fa-exclamation-triangle me-2"></i>
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="alert alert-success" role="alert">
+                    <i className="fas fa-check-circle me-2"></i>
+                    {success}
+                  </div>
+                )}
+
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Email</label>
                   <input

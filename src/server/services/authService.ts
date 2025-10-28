@@ -18,17 +18,20 @@ export const login = async (
     throw new AppError('Неверный email или пароль', 401);
   }
 
-  // В будущем здесь будет проверка пароля
-  // const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-  // if (!isPasswordValid) {
-  //   throw new AppError('Неверный email или пароль', 401);
-  // }
+  // Проверяем пароль
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash || '');
+  if (!isPasswordValid) {
+    throw new AppError('Неверный email или пароль', 401);
+  }
 
   const accessToken = generateAccessToken(user.id);
   const refreshToken = generateRefreshToken(user.id, rememberMe);
 
+  // Убираем passwordHash из ответа
+  const { passwordHash, ...userWithoutPassword } = user;
+
   return {
-    user,
+    user: userWithoutPassword,
     accessToken,
     refreshToken
   };
@@ -52,8 +55,11 @@ export const register = async (userData: RegisterForm): Promise<{ user: User; ac
   const accessToken = generateAccessToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
 
+  // Убираем passwordHash из ответа
+  const { passwordHash, ...userWithoutPassword } = user;
+
   return {
-    user,
+    user: userWithoutPassword,
     accessToken,
     refreshToken
   };

@@ -17,6 +17,7 @@ export class UserModel {
       bio: row.bio,
       isVerified: row.is_verified,
       role: row.role,
+      passwordHash: row.password_hash,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     };
@@ -38,6 +39,7 @@ export class UserModel {
       bio: row.bio,
       isVerified: row.is_verified,
       role: row.role,
+      passwordHash: row.password_hash,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     };
@@ -67,6 +69,7 @@ export class UserModel {
       bio: row.bio,
       isVerified: row.is_verified,
       role: row.role,
+      passwordHash: row.password_hash,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     };
@@ -91,6 +94,7 @@ export class UserModel {
       bio: row.bio,
       isVerified: row.is_verified,
       role: row.role,
+      passwordHash: row.password_hash,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at)
     };
