@@ -13,16 +13,40 @@ export default function RegisterPage() {
   });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState({
+    firstName: false,
+    lastName: false,
+    username: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    agreeToTerms: false
+  });
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [field]: e.target.value
     }));
+    setTouchedFields(prev => ({
+      ...prev,
+      [field]: true
+    }));
+  };
+
+  const handleInputBlur = (field: string) => () => {
+    setTouchedFields(prev => ({
+      ...prev,
+      [field]: true
+    }));
   };
 
   const handleAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAgreeToTerms(e.target.checked);
+    setTouchedFields(prev => ({
+      ...prev,
+      agreeToTerms: true
+    }));
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -145,14 +169,19 @@ export default function RegisterPage() {
                     </label>
                     <input
                       type="text"
-                      className={`form-control ${formData.firstName ? 'is-valid' : 'is-invalid'}`}
+                      className={`form-control ${
+                        touchedFields.firstName
+                          ? (formData.firstName ? 'is-valid' : 'is-invalid')
+                          : ''
+                      }`}
                       id="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange('firstName')}
+                      onBlur={handleInputBlur('firstName')}
                       placeholder="Введите имя"
                       required
                     />
-                    {!formData.firstName && (
+                    {touchedFields.firstName && !formData.firstName && (
                       <div className="invalid-feedback">Имя обязательно для заполнения</div>
                     )}
                   </div>
@@ -162,14 +191,19 @@ export default function RegisterPage() {
                     </label>
                     <input
                       type="text"
-                      className={`form-control ${formData.lastName ? 'is-valid' : 'is-invalid'}`}
+                      className={`form-control ${
+                        touchedFields.lastName
+                          ? (formData.lastName ? 'is-valid' : 'is-invalid')
+                          : ''
+                      }`}
                       id="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange('lastName')}
+                      onBlur={handleInputBlur('lastName')}
                       placeholder="Введите фамилию"
                       required
                     />
-                    {!formData.lastName && (
+                    {touchedFields.lastName && !formData.lastName && (
                       <div className="invalid-feedback">Фамилия обязательна для заполнения</div>
                     )}
                   </div>
@@ -181,14 +215,19 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="text"
-                    className={`form-control ${formData.username ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      touchedFields.username
+                        ? (formData.username ? 'is-valid' : 'is-invalid')
+                        : ''
+                    }`}
                     id="username"
                     value={formData.username}
                     onChange={handleInputChange('username')}
+                    onBlur={handleInputBlur('username')}
                     placeholder="Придумайте уникальное имя"
                     required
                   />
-                  {!formData.username && (
+                  {touchedFields.username && !formData.username && (
                     <div className="invalid-feedback">Username обязателен для заполнения</div>
                   )}
                 </div>
@@ -199,14 +238,19 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="email"
-                    className={`form-control ${formData.email ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      touchedFields.email
+                        ? (formData.email ? 'is-valid' : 'is-invalid')
+                        : ''
+                    }`}
                     id="email"
                     value={formData.email}
                     onChange={handleInputChange('email')}
+                    onBlur={handleInputBlur('email')}
                     placeholder="Введите email"
                     required
                   />
-                  {!formData.email && (
+                  {touchedFields.email && !formData.email && (
                     <div className="invalid-feedback">Email обязателен для заполнения</div>
                   )}
                 </div>
@@ -217,14 +261,19 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="password"
-                    className={`form-control ${formData.password ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      touchedFields.password
+                        ? (formData.password ? 'is-valid' : 'is-invalid')
+                        : ''
+                    }`}
                     id="password"
                     value={formData.password}
                     onChange={handleInputChange('password')}
+                    onBlur={handleInputBlur('password')}
                     placeholder="Минимум 6 символов"
                     required
                   />
-                  {!formData.password && (
+                  {touchedFields.password && !formData.password && (
                     <div className="invalid-feedback">Пароль обязателен для заполнения</div>
                   )}
                 </div>
@@ -235,14 +284,19 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="password"
-                    className={`form-control ${formData.confirmPassword ? 'is-valid' : 'is-invalid'}`}
+                    className={`form-control ${
+                      touchedFields.confirmPassword
+                        ? (formData.confirmPassword ? 'is-valid' : 'is-invalid')
+                        : ''
+                    }`}
                     id="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange('confirmPassword')}
+                    onBlur={handleInputBlur('confirmPassword')}
                     placeholder="Повторите пароль"
                     required
                   />
-                  {!formData.confirmPassword && (
+                  {touchedFields.confirmPassword && !formData.confirmPassword && (
                     <div className="invalid-feedback">Подтверждение пароля обязательно</div>
                   )}
                 </div>
@@ -260,7 +314,7 @@ export default function RegisterPage() {
                     Согласен с <a href="#" className="text-decoration-none">правилами использования</a>
                     {!agreeToTerms && <span className="text-danger">*</span>}
                   </label>
-                  {!agreeToTerms && (
+                  {touchedFields.agreeToTerms && !agreeToTerms && (
                     <div className="form-text text-danger">Необходимо согласиться с правилами использования</div>
                   )}
                 </div>
