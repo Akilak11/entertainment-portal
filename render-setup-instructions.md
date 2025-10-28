@@ -83,14 +83,14 @@ LIBRETRANSLATE_API_URL=https://libretranslate.de/translate
 DATABASE_URL=postgresql://entertainment_portal_db_user:TTCVaTzwXIcQnRxLjYUYBqNdToN6lyXY@dpg-d40g953ipnbc73b1j3h0-a/entertainment_portal_db
 ```
 
-**Для Redis:**
+**Для Redis (используйте Internal URL из настроек Redis базы данных):**
 ```env
-REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
+REDIS_URL=redis://red-d40g9c24d50c73d5eg70:6379
 ```
 
-**ИЛИ если Redis еще не создан:**
+**ИЛИ используя переменную:**
 ```env
-REDIS_URL=redis://your-redis-url-here
+REDIS_URL=${{ entertainment-portal-redis.REDIS_URL }}
 ```
 
 ---
