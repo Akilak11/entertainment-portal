@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { login, register, refresh, logout } from '../controllers/authController';
 import { validateLogin, validateRegister } from '../middleware/validation';
 import { authenticateToken } from '../middleware/authMiddleware';
+import { UserModel } from '../models/User';
 
 const router = Router();
 
